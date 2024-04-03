@@ -178,7 +178,8 @@ apt update
 Next, proceed to install the following packages.
 
 ```bash
-apt install telnet         \
+apt install git            \
+            telnet         \
             limesuite      \
             osmo-hlr       \
             osmo-msc       \
