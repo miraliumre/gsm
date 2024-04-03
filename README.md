@@ -219,6 +219,15 @@ Within the cloned repository, navigate to `etc/osmocom` for the relevant
 Osmocom configuration files. Update these files based on your network
 preferences.
 
+**First, in [osmo-bsc.cfg],** set the MCC[^6] and MNC[^7] for your network. As
+defaults, we have set 724 as the MCC because it is associated with Brazil, and
+64 as the MNC to avoid conflicts with existing Brazilian carriers' MNCs.
+
+```
+network country code 724
+mobile network code 64
+```
+
 **In [osmo-ggsn.cfg],** you have the option to customize DNS and IP settings to
 avoid conflicts with your existing networks.
 
@@ -228,7 +237,7 @@ ip dns 1 8.8.4.4
 ip prefix dynamic 172.16.32.0/24
 ```
 
-**In [osmo-hlr.cfg],** note the following directives:
+**Next, in [osmo-hlr.cfg],** note the following directives:
 
 - `ussd route prefix *#100# internal own-msisdn` provides a USSD[^3] service to
   display the user's MSISDN[^4] by dialing `*#100#`.
@@ -240,13 +249,10 @@ ip prefix dynamic 172.16.32.0/24
   attaching to the network. It declares that each device should be assigned an
   8-digit MSISDN, and be allowed to access both CS and PS services.
 
-**Edit [osmo-msc.cfg]** to set the MCC[^6] and MNC[^7] for your network. As
-defaults, we have set 724 as the MCC because it is associated with Brazil, and
-64 as the MNC to avoid conflicts with existing Brazilian carriers' MNCs.
-
-You might also want to personalize the short name and long name of your
-network. If you decide to require authentication, you must change the
-authentication line to `authentication required`.
+**Edit [osmo-msc.cfg]** to match the MCC and the MNC that you have previously
+set on `osmo-bsc.cfg`. Here, you might also want to personalize the short name
+and long name of your network. If you decide to require authentication, you
+must change the authentication line to `authentication required`.
 
 ```
 network country code 724
@@ -353,10 +359,11 @@ package.
 ### Start the Osmocom services
 
 Use the [src/update-cfg.sh] convenience script to start all the required
-Osmocom services (i.e. by running `src/update-cfg.sh start`). If the services
-had already been started previously, it is recommended to completely stop them
-by running `src/update-cfg.sh stop` (and, possibly, `src/update-cfg.sh kill`,
-if needed) before starting them again.
+Osmocom services (i.e. by running `src/update-cfg.sh start`). It is likely that
+the services had already been started automatically when you installed them, so
+it is recommended to completely stop them by running `src/update-cfg.sh stop`
+(and, possibly, `src/update-cfg.sh kill`, if needed) before starting them
+again.
 
 [src/update-cfg.sh]: src/update-cfg.sh
 
@@ -499,7 +506,7 @@ configurations may be missing.
 
 ## Emergency alerts
 
-![](img/android_extreme_alert.png "Extreme alert")  
+![](img/android_extreme_alert.png "Extreme alert")
 
 You can broadcast emergency alerts on the GSM network using the REST API
 provided by OsmoCBC. The `osmo-cbc-utils` package provides a command line tool
