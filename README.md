@@ -315,7 +315,7 @@ you'll be required to:
    settings in `osmo-ggsn.cfg`);
 
    ```bash
-   ip addr add 192.168.7.1/24 dev apn0
+   ip addr add 172.16.32.1/24 dev apn0
    ```
 
 3. bring the interface up;
