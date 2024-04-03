@@ -540,6 +540,12 @@ and VTY reference, all accessible on the project's website.
 [Osmocom Network In The Box]: https://osmocom.org/projects/cellular-infrastructure/wiki/Osmocom_Network_In_The_Box
 [Osmocom Docs]: https://downloads.osmocom.org/docs/
 
+### Contributions
+
+This guide is open for contributions! Whether you've spotted a mistake, have
+suggestions for improvements, or want to expand on the content, your input is
+invaluable. Please feel free to open an issue or submit a pull request.
+
 ## Acknowledgements
 
 This guide builds upon the work of [Lucas Teske], who first delved into this
