@@ -1,7 +1,7 @@
-# 📶 GSM (2G) network with LimeSDR and Osmocom
+# 📶 GSM (2G) Network with LimeSDR and Osmocom
 
-> **⚠️ Warning:** Setting up a GSM network involves the utilization of specific
-> frequencies that are generally heavily regulated. In most jurisdictions,
+> **⚠️ Warning:** Setting up a GSM network involves using
+> frequencies that are, in general, heavily regulated. In most jurisdictions,
 > transmitting on these frequencies without proper authorization is against the
 > law and subject to severe penalties.
 >
@@ -25,21 +25,20 @@ mobile communications have once relied on. It has long been obsoleted due to
 its limitations and well-documented security vulnerabilities, being replaced by
 newer standards such as UMTS (3G), LTE (4G) and, more recently, 5G. Remarkably,
 despite its obsolescense, even the most current smartphones remain compatible
-with GSM, allowing them to connect to such networks without a hitch!
+with GSM!
 
-The setup outlined in this guide supports voice calls and SMS between the
+The setup outlined in this guide supports voice calls and SMS between the GSM
 network's subscribers and is capable of providing emergency alerts over
 [CB (Cell Broadcast)]. It also provides internet access, although the slow
 speeds of 2G technologies (GPRS and EDGE) render it impractical for using
 modern websites and apps, as even loading a simple page can take long minutes.
 
-It would be theoretically possible to enable calls to and from other carriers
+It should be possible to enable calls to and from other carriers
 by using the [OsmoSIPConnector], PBX software, and a compatible SIP service
 provider. However, that is beyond the scope of this guide, as its focus is on
 creating a minimalist, self-contained network.
 
-The practical purpose for setting up a GSM network is up to you. It could serve
-as an entertaining project or an educational tool and a means to explore the
+As for what is the practical purpose for setting up a GSM network, that is up to you. It could be just an entertaining project, or it could serve as an educational tool and a means to explore the
 evolution of mobile communication protocols, including their security
 implications. These DIY GSM networks are sometimes showcased at hacker events
 around the world as fun demonstrations, despite the questionable legality (see
@@ -59,7 +58,7 @@ component. While the LimeSDR hardware is probably capable of handling the
 protocol, I haven't been able to find documentation on anyone successfully
 using it for that purpose. Online searches have led me to [OpenBTS-UMTS], a
 now-discontinued project, making it challenging to find supporting resources.
-Given these obstacles, and since 2G met my experimental needs, I have decided
+Given these difficulties, and since 2G met my experimental needs, I have decided
 not to pursue 3G.
 
 For 4G and beyond, the [srsRAN] project is well-established, and provides
@@ -74,15 +73,15 @@ project list.
 
 ## Security Considerations
 
-It's clear that 2G technology is outdated and not secure. Therefore, any GSM
-network, including those set up following this guide, shouldn't be considered
+It's clear that 2G technology is outdated and not secure. No GSM
+network should be considered
 safe for transmitting sensitive information. Additionally, creating a GSM
 network like this could pose risks to both the host system and any networks
 connected to it.
 
 The Osmocom project's components use a variety of TCP ports for different
 purposes. One key feature is the VTY (virtual terminal), which allows a user to
-connect, monitor, and tweak settings on a component. In the setup we're
+connect, monitor, and tweak settings on a running component. In the setup we're
 discussing, these ports are configured to only accept connections from the
 local machine (localhost) and don't require any authentication. This means that
 anyone with access to the system could potentially log in, run commands, and
@@ -100,9 +99,8 @@ users. As such, it's wise to implement appropriate firewall rules.
 
 ## Setup
 
-These setup instructions are tailored for a Debian 12 (“bookworm”) environment
-with a LimeSDR connected via USB. Should your setup differ, adjustments to the
-commands may be necessary.
+These setup instructions are based on a Debian 12 (“bookworm”) environment
+with a LimeSDR connected via USB. Should your setup differ, you may have to make adjustments to these steps.
 
 ### Deciding on authentication
 
@@ -114,23 +112,23 @@ SIM card to be used.
 
 Your decision on whether to enforce authentication or not will significantly
 impact how users connect to your network and the technical steps required for
-setup.
+your setup.
 
 *If you opt to enforce authentication,* you will need programmable SIM cards
 and must program them with specific network parameters, including the PLMN[^1]
-lists and the authentication key (Ki[^2]). Furthermore, you'll need to add each
+lists and the authentication key (Ki)[^2]. Furthermore, you'll need to add each
 subscriber to the network database managed by OsmoHLR.
 
 *If you decide for an “open” network,* users can manually select your network
 by disabling automatic network selection in their phone's settings. Even
 without enforcing authentication, you can still use programmable SIM cards
 for automatic connection to your network (i.e. so automatic network selection
-doesn't need to be disabled), although they are not required.
+doesn't need to be disabled), although those are not required for connection.
 
-[^1]: **PLMN (Preferred List of Mobile Networks)** is a list stored on a SIM
-      card that contains the mobile networks that the subscriber prefers to
+[^1]: **PLMN (Preferred List of Mobile Networks)** refers to a list stored on a SIM
+      card containing the mobile networks that the subscriber should
       connect to. This list is used by the mobile phone to automatically select
-      one of the preferred networks when it is available.
+      one of the networks when they are available.
 
 [^2]: **Ki** is a 128-bit value used in the authentication and ciphering
       process between the mobile device and the GSM network. It is stored both
@@ -145,15 +143,14 @@ For programmable SIM cards, [sysmocom] is a renowned and reliable provider.
 Alternatively, marketplaces like Banggood and AliExpress offer inexpensive
 writeable SIM cards, though quality and features can vary.
 
-A critical concern with SIM cards from these marketplaces is the software
-provided by vendors for programming. Often, this software can be best described
+One possible concern with SIM cards from these marketplaces is that they may sometimes require software
+provided by the vendors for writing parameters to them. Often, this software can be best described
 as opaque — its origins and functionalities are not transparent, raising
 legitimate concerns about security and integrity. There's a real risk of
-encountering malware or other malicious software disguised as legitimate
-programming tools.
+them containing malware.
 
-If you find yourself needing to use vendor-provided software, especially from
-less reputable sources, it is wise to take precautions such as running the
+If you find yourself needing to use vendor-provided software from these
+less reputable sources, you should take precautions such as running the
 software within an isolated virtual machine.
 
 [sysmocom]: https://shop.sysmocom.de/SIM/Cards/
@@ -188,7 +185,7 @@ apt install telnet         \
             osmo-cbc-utils
 ```
 
-If you haven't yet done so, you might want to take this opportunity to check
+If you haven't done so yet, you might want to take this opportunity to check
 that your LimeSDR is connected, updated and working properly, by running
 `LimeUtil --update` and `LimeQuickTest`.
 
@@ -444,22 +441,21 @@ Unlike with calls and SMS, internet access through your GSM network might
 require some additional configuration on the mobile device itself.
 
 First off, if your GSM network is set up without authentication, or if your
-SIM's HPLMN and EPLMN settings are incorrect, the mobile device might think
+SIM's PLMN settings are incorrect, the mobile device might think
 it's [roaming]. This often means it'll automatically turn off data to avoid
 charges. To get around this, you may either tweak your SIM's configuration,
 which is only possible if you are using your own programmable SIM cards, or
 [enable data roaming].
 
 To determine if your Android mobile phone is in roaming, simply look at the
-status bar at the top of your phone's screen. If you see an icon that resembles
-a triangle or an "R" next to your signal strength bars, this indicates that
+status bar at the top of your phone's screen. If you see an "R" next to your signal strength bars, this indicates that
 the phone is currently in roaming mode.
 
 ![](img/android_roaming_icon.png "Android roaming icon")  
 *"Roaming symbol shown on an Android smartphone" by The RedBurn, Mark Groves on
 [Wikimedia Commons]*
 
-Next up, your device needs the right APN (Access Point Name) settings to
+Next up, your device needs APN (Access Point Name) settings to
 connect to data. Usually, carriers push these settings through [OTA updates],
 but here, we'll just set it up manually.
 
@@ -494,7 +490,7 @@ cbc-apitool.py create-cbs    \
 
 From my experience, transmitting these alerts and ensuring that they are
 successfully received by the devices on the network can be somewhat tricky. As
-such, it's advisable to familiarize yourself with the specifics of [CB]
+such, it's advisable to familiarize yourself with the specifics of CB
 technology.
 
 Some issues you might run into:
@@ -517,13 +513,11 @@ Some issues you might run into:
 > 
 > ![](img/android_wea_settings.png?raw=true "Wireless emergency alerts")
 
-[CB]: https://osmocom.org/projects/cellular-infrastructure/wiki/Cell_Broadcast
-
 ## Further Reading
 
 Cellular technology and its related components, including the Osmocom project,
-are fascinatingly intricate and complex. Although this guide gives you a
-straightforward path to setting up a GSM network quickly, you might wish to
+are fascinatingly complex. Although this guide gives you a
+straightforward path to setting up a GSM network quickly, you might want to
 dive in deeper to further your understanding.
 
 The Osmocom project offers their own configuration guide for a basic and
@@ -542,9 +536,8 @@ and VTY reference, all accessible on the project's website.
 
 ### Contributions
 
-This guide is open for contributions! Whether you've spotted a mistake, have
-suggestions for improvements, or want to expand on the content, your input is
-invaluable. Please feel free to open an issue or submit a pull request.
+This guide is open for contributions! If you've spotted a mistake, have
+suggestions for improvements, or want to expand on the content, please feel free to open an issue or submit a pull request.
 
 ## Acknowledgements
 
@@ -554,8 +547,8 @@ topic back in 2019, and later shared his insights at the [RF Village] at the
 
 A huge shoutout is also due to the entire open source community that has created
 and supports projects such as the LimeSDR and Osmocom. It is because of these
-efforts that individual researchers and small business can now dive into complex
-radio communication standards without shelling out massive amounts of cash for
+efforts that individuals and small business can now research complex
+radio communication protocols without shelling out massive amounts of cash for
 high-end equipment typically reserved for the giants in the telecom industry.
 
 [Lucas Teske]: https://lucasteske.dev/2019/12/creating-your-own-gsm-network-with-limesdr/
