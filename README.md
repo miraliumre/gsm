@@ -252,7 +252,9 @@ ip prefix dynamic 172.16.32.0/24
 **Edit [osmo-msc.cfg]** to match the MCC and the MNC that you have previously
 set on `osmo-bsc.cfg`. Here, you might also want to personalize the short name
 and long name of your network. If you decide to require authentication, you
-must change the authentication line to `authentication required`.
+must change the authentication line to `authentication required`. Also notice
+the `encryption a5 0` line, which disables ciphering — this is required for
+networks where authentication is set to `optional`.
 
 ```
 network country code 724
@@ -260,6 +262,7 @@ mobile network code 64
 short name Miralium
 long name MiraliumResearch
 authentication optional
+encryption a5 0
 ```
 
 **In [osmo-sgsn.cfg],** if you decide to require authentication on your
