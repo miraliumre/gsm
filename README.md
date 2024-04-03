@@ -180,6 +180,7 @@ Next, proceed to install the following packages.
 ```bash
 apt install git            \
             telnet         \
+            iptables       \
             limesuite      \
             osmo-hlr       \
             osmo-msc       \
