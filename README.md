@@ -43,12 +43,13 @@ as an entertaining project or an educational tool and a means to explore the
 evolution of mobile communication protocols, including their security
 implications. These DIY GSM networks are sometimes showcased at hacker events
 around the world as fun demonstrations, despite the questionable legality (see
-the warning in the beginning of this guide).
+the [warning] at the beginning of this guide).
 
 [CB (Cell Broadcast)]: https://osmocom.org/projects/cellular-infrastructure/wiki/Cell_Broadcast
 [LimeSDR]: https://limemicro.com/products/boards/limesdr/
 [Osmocom]: https://osmocom.org/
 [OsmoSIPConnector]: https://osmocom.org/projects/osmo-sip-conector
+[warning]: #-gsm-2g-network-with-limesdr-and-osmocom
 
 #### What about 3G and up?
 
@@ -71,30 +72,31 @@ project list.
 [srsRAN]: https://www.srslte.com/
 [using a Raspberry Pi 4 and SDRs to create an eNodeB]: https://docs.srsran.com/projects/4g/en/next/app_notes/source/pi4/source/index.html
 
-### Basic Concepts
+### Security Considerations
 
-- **MCC (Mobile Country Code):** a three-digit code assigned to each country,
-  used to identify the country in which a mobile subscriber belongs.
+It's clear that 2G technology is outdated and not secure. Therefore, any GSM
+network, including those set up following this guide, shouldn't be considered
+safe for transmitting sensitive information. Additionally, creating a GSM
+network like this could pose risks to both the host system and any networks
+connected to it.
 
-- **MNC (Mobile Network Code):** a two or three-digit code used in combination
-  with the MCC to identify a mobile phone operator within a country. Each
-  operator has unique MNCs (often more than one), which, when paired with the
-  MCC, forms an unique operator identification worldwide.
+The Osmocom project's components use a variety of TCP ports for different
+purposes. One key feature is the VTY (virtual terminal), which allows a user to
+connect, monitor, and tweak settings on a component. In the setup we're
+discussing, these ports are configured to only accept connections from the
+local machine (localhost) and don't require any authentication. This means that
+anyone with access to the system could potentially log in, run commands, and
+change the settings of any active Osmocom component.
 
-- **IMSI (International Mobile Subscriber Identity):** a unique identifier for
-  each user of the network. It is stored on the SIM card, composed of up to 15
-  digits, and structured to include the MCC, the MNC, and a unique subscriber
-  number.
+If this level of access doesn't suit your needs, you'll need to dive into the
+configuration files to tighten security, and consider strategies such as
+firewall rules that distinguish between users, utilizing network namespaces,
+among others.
 
-- **Ki:** a 128-bit value used in the authentication and ciphering process
-   between the mobile device and the GSM network. It is stored both in the
-   subscriber's SIM card and the network's database, and is used to
-   authenticate the authorized users to the network.
-
-> **ℹ️ Heads up:** you can find lists of MCC and MNC codes online, such as at
-> [mcc-mnc.com].
-
-[mcc-mnc.com]: https://mcc-mnc.com
+Keep in mind that, as your GSM network offers internet access, there's a chance
+subscribers might misuse it. Forwarding packets could inadvertently expose
+other devices on your networks to unauthorized access from the GSM network
+users. As such, it's wise to implement appropriate firewall rules.
 
 ### Setup
 
@@ -102,7 +104,59 @@ These setup instructions are tailored for a Debian 12 (“bookworm”) environme
 with a LimeSDR connected via USB. Should your setup differ, adjustments to the
 commands may be necessary.
 
-#### Security considerations
+#### Deciding on authentication
+
+In 2G networks, unlike on 3G/4G/5G, the network authenticates the subscribers,
+but the mobile devices are not required to authenticate the network itself. In
+effect, this means you can choose to have an “open” network that authenticates
+any device attempting to connect to it and, as such, does not require a custom
+SIM card to be used.
+
+Your decision on whether to enforce authentication or not will significantly
+impact how users connect to your network and the technical steps required for
+setup.
+
+*If you opt to enforce authentication,* you will need programmable SIM cards
+and must program them with specific network parameters, including the PLMN[^1]
+lists and the authentication key (Ki[^2]). Furthermore, you'll need to add each
+subscriber to the network database managed by OsmoHLR.
+
+*If you decide for an “open” network,* users can manually select your network
+by disabling automatic network selection in their phone's settings. Even
+without enforcing authentication, you can still use programmable SIM cards
+for automatic connection to your network (i.e. so automatic network selection
+doesn't need to be disabled), although they are not required.
+
+[^1]: **PLMN (Preferred List of Mobile Networks)** is a list stored on a SIM
+      card that contains the mobile networks that the subscriber prefers to
+      connect to. This list is used by the mobile phone to automatically select
+      one of the preferred networks when it is available.
+
+[^2]: **Ki** is a 128-bit value used in the authentication and ciphering
+      process between the mobile device and the GSM network. It is stored both
+      in the subscriber's SIM card and the network's database, and is used to
+      authenticate the authorized users to the network.
+
+#### Programmable SIM cards
+
+![](img/sysmo_sim.png "Programmable SIM card from sysmocom")
+
+For hobbyist applications, [sysmocom] is a renowned and reliable provider.
+Alternatively, marketplaces like Banggood and AliExpress offer inexpensive
+writeable SIM cards, though quality and features can vary.
+
+A critical concern with SIM cards from these marketplaces is the software
+provided by vendors for programming. Often, this software can be best described
+as opaque — its origins and functionalities are not transparent, raising
+legitimate concerns about security and integrity. There's a real risk of
+encountering malware or other malicious software disguised as legitimate
+programming tools.
+
+If you find yourself needing to use vendor-provided software, especially from
+less reputable sources, it is wise to take precautions such as running the
+software within an isolated virtual machine.
+
+[sysmocom]: https://shop.sysmocom.de/SIM/Cards/
 
 #### Install required packages
 
@@ -138,7 +192,6 @@ If you haven't yet done so, you might want to take this opportunity to check
 that your LimeSDR is connected, updated and working properly, by running
 `LimeUtil --update` and `LimeQuickTest`.
 
-
 [extrepo]: https://manpages.ubuntu.com/manpages/focal/man1/extrepo.1p.html
 [Osmocom wiki]: https://osmocom.org/projects/cellular-infrastructure/wiki/Latest_Builds
 
@@ -157,17 +210,6 @@ Within the cloned repository, navigate to `etc/osmocom` for the relevant
 Osmocom configuration files. Update these files based on your network
 preferences.
 
-**Start by editing [osmo-bsc.cfg].** Here, you'll find lines setting the MCC and
-MNC for your network:
-
-```
-network country code 724
-mobile network code 64
-```
-
-The default 724 is Brazil's country code, with 64 chosen to avoid conflicts
-with existing Brazilian carriers' MNCs.
-
 **In [osmo-ggsn.cfg],** you have the option to customize DNS and IP settings to
 avoid conflicts with your existing networks.
 
@@ -179,22 +221,23 @@ ip prefix dynamic 172.16.32.0/24
 
 **In [osmo-hlr.cfg],** note the following directives:
 
-- `ussd route prefix *#100# internal own-msisdn` provides a USSD service to
-  display the user's MSISDN by dialing `*#100#`.
+- `ussd route prefix *#100# internal own-msisdn` provides a USSD[^3] service to
+  display the user's MSISDN[^4] by dialing `*#100#`.
 
 - `ussd route prefix *#101# internal own-imsi` provides a USSD service for
-  viewing the SIM card's IMSI by dialing `*#101#`.
+  viewing the SIM card's IMSI[^5] by dialing `*#101#`.
 
 - `subscriber-create-on-demand 8 cs+ps` enables auto-registering for devices
   attaching to the network. It declares that each device should be assigned an
-  8-digit MSISDN, and be allowed to access both CS (Circuit Switched, e.g.
-  voice calss) and PS (Packet Switched, e.g. internet access) services.
+  8-digit MSISDN, and be allowed to access both CS and PS services.
 
-**Update [osmo-msc.cfg]** to reflect the network country code and mobile
-network code from `osmo-bsc.cfg`. Here, you might also want to personalize the
-short name and long name of your network. If you decide to require
-authentication, change the `authentication optional` line to
-`authentication required`.
+**Edit [osmo-msc.cfg]** to set the MCC[^6] and MNC[^7] for your network. As
+defaults, we have set 724 as the MCC because it is associated with Brazil, and
+64 as the MNC to avoid conflicts with existing Brazilian carriers' MNCs.
+
+You might also want to personalize the short name and long name of your
+network. If you decide to require authentication, you must change the
+authentication line to `authentication required`.
 
 ```
 network country code 724
@@ -211,6 +254,31 @@ network, you might want to change the `auth-policy accept-all` line to
 **Finally,** copy all the configuration files to the `/etc/osmocom` directory on
 your system. A script for doing so is provided under [src/update-cfg.sh] for
 convenience.
+
+[^3]: **USSD (Unstructured Supplementary Service Data)** is a messaging
+      technology allowing a session-based, two-way exchange of a sequence of
+      data. One of its uses is providing users with access to network services
+      by dialing short codes, typically starting with * and ending with #,
+      without the need for an internet connection.
+
+[^4]: **MSISDN (Mobile Station International Subscriber Directory Number)** is
+      a number uniquely identifying a subscription in the GSM network. Simply
+      put, it is the phone number. It is stored on the network's database,
+      where it can be looked up in relation to the IMSI.
+
+[^5]: **IMSI (International Mobile Subscriber Identity)** is a unique
+      identifier for each user of the network. It is stored on the SIM card,
+      composed of up to 15 digits, and structured to include the MCC, the MNC,
+      and a unique subscriber number.
+
+[^6]: **MCC (Mobile Country Code)** is a three-digit code assigned to each
+      country, used to identify the country in which a mobile subscriber
+      belongs.
+
+[^7]: **MNC (Mobile Network Code)** is a two or three-digit code used in
+      combination with the MCC to identify a mobile phone operator within a
+      country. Each operator has unique MNCs (often more than one), which, when
+      paired with the MCC, forms an unique operator identification worldwide.
 
 [osmo-bsc.cfg]: etc/osmocom/osmo-bsc.cfg
 [osmo-ggsn.cfg]: etc/osmocom/osmo-ggsn.cfg
@@ -275,11 +343,141 @@ if needed) before starting them again.
 
 ### Network Usage
 
+If your GSM network has been set up to require authentication, connecting to
+the network is straightforward, assuming your SIM card has been programmed
+correctly. Simply insert the SIM card into your mobile device, and it should
+automatically detect and connect to the network.
+
+In the case of an open network that does not require subscriber authentication,
+the connection process involves a few more steps, and these steps can vary
+significantly depending on the mobile device's operating system. For Android
+devices, navigate to *Settings* › *Network & internet* › *Mobile network*,
+locate the option for *Automatically select network* and disable this toggle.
+
+After disabling the automatic selection, your device will search for available
+networks and present them to you. Your GSM network may not appear on the list
+by the configured name, but rather, as a numerical representation composed of
+the MCC and the MNC you have configured (e.g. “72464”). Upon selecting it,
+your device should connect to your network.
+
+![](img/android_choose_network.gif?raw=true "Choose network")
+
+#### Managing subscribers
+
+You can manage subscribers via the OsmoHLR's VTY interface. By default, OsmoHLR
+binds its VTY to TCP port `4258`. To connect, you may use `telnet`, as follows.
+
+```bash
+telnet 127.0.0.1 4258
+```
+
+Upon successful connection, you will be presented with the OsmoHLR command
+prompt. To begin with, enter the `enable` mode.
+
+```shell
+OsmoHLR> enable
+```
+
+You may list all available commands, as well as get help for a specific
+command's parameters, by pressing the `?` key.
+
+For networks that require authentication, it's necessary to add subscribers
+manually, specifying their IMSI and Ki values. To create a subscriber, refer
+to the following example, and replace the placeholder IMSI 724640000000000 with
+the actual IMSI of the SIM card you are registering.
+
+```shell
+OsmoHLR# subscriber imsi 724640000000000 create
+% Created subscriber 724640000000000
+    ID: 1
+    IMSI: 724640000000000
+    MSISDN: none
+```
+
+Now, assign a MSISDN to your subscriber. In this case, we'll be using 12345678.
+Remember, this is a placeholder and should be replaced with the actual phone
+number you wish to assign.
+
+```shell
+OsmoHLR# subscriber imsi 724640000000000 update msisdn 12345678
+% Updated subscriber IMSI='724640000000000' to MSISDN='12345678'
+```
+
+Next, specify the authentication parameters. This example uses `comp128v1` as
+the AUC algorithm, but depending on your SIM card settings, `comp128v3` may be
+required. The Ki (authentication key) provided here is a placeholder and must
+be replaced with the actual Ki of your SIM card.
+
+```shell
+OsmoHLR# subscriber imsi 724640000000000 update aud2g comp128v1 ki 00000000000000000000000000000000
+```
+
+Specify the network access mode (e.g., cs+ps for both circuit-switched and
+packet-switched access).
+
+```shell
+OsmoHLR# subscriber imsi 724640000000000 update network-access-mode cs+ps 
+```
+
+To view the updated information for a subscriber, use the show command.
+
+```shell
+OsmoHLR# subscriber imsi 724640000000000 show
+    ID: 1
+    IMSI: 724640000000000
+    MSISDN: 12345678
+    2G auth: COMP128v1
+             KI=00000000000000000000000000000000
+```
+
 #### Calls and SMS
 
-#### Internet Access
+Once a device is connected to the GSM network, calls and SMS should *just*
+*work*. To figure out the phone numbers to call and/or send messages to, look
+up each subscriber's MSISDN. You can either do this directly from the host
+system (e.g. by querying the OsmoHLR VTY) or by using the USSD service on a
+mobile phone to find out its assigned number (dial `*#100#`).
 
-#### Emergency Alerts
+#### Internet access
+
+Unlike with calls and SMS, internet access through your GSM network might
+require some additional configuration on the mobile device itself.
+
+First off, if your GSM network is set up without authentication, or if your
+SIM's HPLMN and EPLMN settings are incorrect, the mobile device might think
+it's [roaming]. This often means it'll automatically turn off data to avoid
+charges. To get around this, you may either tweak your SIM's configuration,
+which is only possible if you are using your own programmable SIM cards, or
+[enable data roaming].
+
+To determine if your Android mobile phone is in roaming, simply look at the
+status bar at the top of your phone's screen. If you see an icon that resembles
+a triangle or an "R" next to your signal strength bars, this indicates that
+the phone is currently in roaming mode.
+
+![](img/android_roaming_icon.png "Android roaming icon")  
+*"Roaming symbol shown on an Android smartphone" by The RedBurn, Mark Groves on
+[Wikimedia Commons]*
+
+Next up, your device needs the right APN (Access Point Name) settings to
+connect to data. Usually, carriers push these settings through [OTA updates],
+but here, we'll just set it up manually.
+
+For Android users, head to *Settings* › *Network & internet* › *Mobile network*
+› *Access Point Names*. Here, add a new APN with any name and APN value you
+prefer. Just ensure the MCC and MNC matches your setup. After that, save your
+new APN and select it to get connected.
+
+I have seen older, non-Android phones with different setup requirements. In
+those cases, you might need to browse through the menus and figure out which
+configurations may be missing.
+
+[roaming]: https://en.wikipedia.org/wiki/Roaming
+[Wikimedia Commons]: https://commons.wikimedia.org/wiki/File:Roaming_symbol_Android.svg
+[enable data roaming]: https://www.youtube.com/watch?v=bhRNJJK0-aA
+[OTA updates]: https://stackoverflow.com/a/63635659
+
+#### Emergency alerts
 
 You can broadcast emergency alerts on the GSM network using the REST API
 provided by OsmoCBC. The `osmo-cbc-utils` package provides a command line tool
@@ -316,12 +514,31 @@ Some issues you might run into:
 > **ℹ️ Heads up:** on Android, emergency alert settings are usually under
 > *Settings* › *Notifications* › *Wireless emergency alerts*. On iOS, look for
 > *Settings* › *Notifications* › *Government Alerts*.
+> 
+> ![](img/android_wea_settings.png?raw=true "Wireless emergency alerts")
 
 [CB]: https://osmocom.org/projects/cellular-infrastructure/wiki/Cell_Broadcast
 
-#### Subscriber Management
-
 ### Further Reading
+
+Cellular technology and its related components, including the Osmocom project,
+are fascinatingly intricate and complex. Although this guide gives you a
+straightforward path to setting up a GSM network quickly, you might wish to
+dive in deeper to further your understanding.
+
+The Osmocom project offers their own configuration guide for a basic and
+minimal setup of a 2G/3G network. It goes into more detail about each
+component, illustrating the relationship and communication flow between them.
+
+- [Osmocom Network In The Box]
+
+Additionally, each component within the Osmocom project has its own user manual
+and VTY reference, all accessible on the project's website.
+
+- [Osmocom Docs]
+
+[Osmocom Network In The Box]: https://osmocom.org/projects/cellular-infrastructure/wiki/Osmocom_Network_In_The_Box
+[Osmocom Docs]: https://downloads.osmocom.org/docs/
 
 ### Acknowledgements
 
