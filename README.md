@@ -172,6 +172,7 @@ to the [Osmocom wiki].
 ```bash
 apt install extrepo
 extrepo enable osmocom-latest
+apt update
 ```
 
 Next, proceed to install the following packages.
