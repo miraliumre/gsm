@@ -38,13 +38,12 @@ It should be possible to enable calls to and from other carriers by using the
 However, that is beyond the scope of this guide, as its focus is on creating a
 minimalist, self-contained network.
 
-As for what is the practical purpose for setting up a GSM network, that is up
-to you. It could be just an entertaining project, or it could serve as an
-educational tool and a means to explore the evolution of mobile communication
-protocols, including their security implications. These DIY GSM networks are
-sometimes showcased at hacker events around the world as fun demonstrations,
-despite the questionable legality (see the [warning] at the beginning of this
-guide).
+As for what is the practical purpose of setting up a GSM network, that is up to
+you. It could simply be for entertainment value, or it could serve as a means
+to explore the evolution of mobile communication protocols, including their
+security aspects. These DIY GSM networks are sometimes showcased at hacker
+events around the world as fun demonstrations, despite the questionable
+legality (see the [warning] at the beginning of this guide).
 
 [CB (Cell Broadcast)]:
   https://osmocom.org/projects/cellular-infrastructure/wiki/Cell_Broadcast
@@ -56,13 +55,15 @@ guide).
 ### What about 3G and up?
 
 The Osmocom project does support the UMTS standard; however, its
-[documentation] suggests the need for a third-party hNodeB, a separate hardware
-component. While the LimeSDR hardware is probably capable of handling the
-protocol, I haven't been able to find documentation on anyone successfully
-using it for that purpose. Online searches have led me to [OpenBTS-UMTS], a
-now-discontinued project, making it challenging to find supporting resources.
-Given these difficulties, and since 2G met my experimental needs, I have
-decided not to pursue 3G.
+[documentation] indicates the need for a third-party hNodeB, a separate
+hardware component.
+
+While the LimeSDR hardware is probably capable of handling the protocol, I
+haven't been able to find documentation on anyone successfully using it for
+that purpose. Online searches have led me to [OpenBTS-UMTS], a now-discontinued
+project, making it challenging to find supporting resources. Given these
+difficulties, and since 2G met my experimental needs, I have decided not to
+pursue 3G.
 
 For 4G and beyond, the [srsRAN] project is well-established, and provides
 examples such as a setup [using a Raspberry Pi 4 and SDRs to create an eNodeB].
@@ -78,10 +79,10 @@ project list.
 
 ## Security Considerations
 
-It's clear that 2G technology is outdated and not secure. No GSM network should
+It's clear that 2G technology is outdated and insecure. No GSM network should
 be considered safe for transmitting sensitive information. Additionally,
 creating a GSM network like this could pose risks to both the host system and
-any networks connected to it.
+any other networks (e.g. Ethernet and Wi-Fi) connected to it.
 
 The Osmocom project's components use a variety of TCP ports for different
 purposes. One key feature is the VTY (virtual terminal), which allows a user to
@@ -358,16 +359,16 @@ if needed) before starting them again.
 
 ## Network Usage
 
-If your GSM network has been set up to require authentication, connecting to
-the network is straightforward, assuming your SIM card has been programmed
-correctly. Simply insert the SIM card into your mobile device, and it should
-automatically detect and connect to the network.
+If your GSM network has been set up to require authentication, connecting to it
+is straightforward, assuming your SIM card has been programmed correctly.
+Simply insert the SIM card into the mobile device, and it should automatically
+find and connect to the network.
 
-In the case of an open network that does not require subscriber authentication,
-the connection process involves a few more steps, and these steps can vary
-significantly depending on the mobile device's operating system. For Android
-devices, navigate to _Settings_ › _Network & internet_ › _Mobile network_,
-locate the option for _Automatically select network_ and disable this toggle.
+In the case you are not using custom SIM cards, the connection process involves
+a few more steps, and these steps can vary significantly depending on the
+mobile device's operating system. For Android devices, navigate to _Settings_ ›
+_Network & internet_ › _Mobile network_, locate the option for _Automatically
+select network_ and disable this toggle.
 
 After disabling the automatic selection, your device will search for available
 networks and present them to you. Your GSM network may not appear on the list
@@ -447,11 +448,11 @@ OsmoHLR# subscriber imsi 724640000000000 show
 
 ### Calls and SMS
 
-Once a device is connected to the GSM network, calls and SMS should _just_
-_work_. To figure out the phone numbers to call and/or send messages to, look
-up each subscriber's MSISDN. You can either do this directly from the host
-system (e.g. by querying the OsmoHLR VTY) or by using the USSD service on a
-mobile phone to find out its assigned number (dial `*#100#`).
+Once a device is connected to the GSM network, calls and SMS should _just
+work_. To figure out the phone numbers to call and/or send messages to, look up
+each subscriber's MSISDN. You can either do this directly from the host system
+(e.g. by querying the OsmoHLR VTY) or by using the USSD service on a mobile
+phone to find out its assigned number (dial `*#100#`).
 
 ### Internet access
 
@@ -474,9 +475,9 @@ mode.
 _"Roaming symbol shown on an Android smartphone" by The RedBurn, Mark Groves on
 [Wikimedia Commons]_
 
-Next up, your device needs APN (Access Point Name) settings to connect to data.
-Usually, carriers push these settings through [OTA updates], but here, we'll
-just set it up manually.
+Next up, your device will require APN (Access Point Name) settings to
+successfully access the internet. Usually, carriers push these settings to
+subscribers through [OTA updates], but here, we'll just set it up manually.
 
 For Android users, head to _Settings_ › _Network & internet_ › _Mobile network_
 › _Access Point Names_. Here, add a new APN with any name and APN value you
@@ -557,7 +558,7 @@ and VTY reference, all accessible on the project's website.
 
 ### Contributions
 
-This guide is open for contributions! If you've spotted a mistake, have
+This repository is open for contributions! If you've spotted a mistake, have
 suggestions for improvements, or want to expand on the content, please feel
 free to open an issue or submit a pull request.
 
