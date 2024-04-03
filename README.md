@@ -51,7 +51,7 @@ the [warning] at the beginning of this guide).
 [OsmoSIPConnector]: https://osmocom.org/projects/osmo-sip-conector
 [warning]: #-gsm-2g-network-with-limesdr-and-osmocom
 
-#### What about 3G and up?
+### What about 3G and up?
 
 The Osmocom project does support the UMTS standard; however, its
 [documentation] suggests the need for a third-party hNodeB, a separate hardware
@@ -72,7 +72,7 @@ project list.
 [srsRAN]: https://www.srslte.com/
 [using a Raspberry Pi 4 and SDRs to create an eNodeB]: https://docs.srsran.com/projects/4g/en/next/app_notes/source/pi4/source/index.html
 
-### Security Considerations
+## Security Considerations
 
 It's clear that 2G technology is outdated and not secure. Therefore, any GSM
 network, including those set up following this guide, shouldn't be considered
@@ -98,13 +98,13 @@ subscribers might misuse it. Forwarding packets could inadvertently expose
 other devices on your networks to unauthorized access from the GSM network
 users. As such, it's wise to implement appropriate firewall rules.
 
-### Setup
+## Setup
 
 These setup instructions are tailored for a Debian 12 (“bookworm”) environment
 with a LimeSDR connected via USB. Should your setup differ, adjustments to the
 commands may be necessary.
 
-#### Deciding on authentication
+### Deciding on authentication
 
 In 2G networks, unlike on 3G/4G/5G, the network authenticates the subscribers,
 but the mobile devices are not required to authenticate the network itself. In
@@ -137,7 +137,7 @@ doesn't need to be disabled), although they are not required.
       in the subscriber's SIM card and the network's database, and is used to
       authenticate the authorized users to the network.
 
-#### Programmable SIM cards
+### Programmable SIM cards
 
 ![](img/sysmo_sim.png "Programmable SIM card from sysmocom")
 
@@ -158,7 +158,7 @@ software within an isolated virtual machine.
 
 [sysmocom]: https://shop.sysmocom.de/SIM/Cards/
 
-#### Install required packages
+### Install required packages
 
 First up, add the Osmocom project repository to your system. On Debian, the
 simplest route to do so is by using [extrepo]. For other Linux flavors, refer
@@ -195,7 +195,7 @@ that your LimeSDR is connected, updated and working properly, by running
 [extrepo]: https://manpages.ubuntu.com/manpages/focal/man1/extrepo.1p.html
 [Osmocom wiki]: https://osmocom.org/projects/cellular-infrastructure/wiki/Latest_Builds
 
-#### Clone the repository
+### Clone the repository
 
 This repository contains the basic configuration files and auxiliary scripts
 needed for our setup. Clone it using Git.
@@ -204,7 +204,7 @@ needed for our setup. Clone it using Git.
 git clone git@github.com:miraliumre/gsm.git
 ```
 
-#### Customize settings
+### Customize settings
 
 Within the cloned repository, navigate to `etc/osmocom` for the relevant
 Osmocom configuration files. Update these files based on your network
@@ -287,7 +287,7 @@ convenience.
 [osmo-sgsn.cfg]: etc/osmocom/osmo-sgsn.cfg
 [src/update-cfg.sh]: src/update-cfg.sh
 
-#### Set up routing
+### Set up routing
 
 As per our configuration, OsmoGGSN will use a TUN interface named `apn0` from which the GSM network subscribers will reach the internet. For it to work, you'll be required to:
 
@@ -331,7 +331,7 @@ package.
 [iptables-persistent]: https://packages.debian.org/bookworm/iptables-persistent
 [UFW]: https://help.ubuntu.com/community/UFW
 
-#### Start the Osmocom services
+### Start the Osmocom services
 
 Use the [src/update-cfg.sh] convenience script to start all the required
 Osmocom services (i.e. by running `src/update-cfg.sh start`). If the services
@@ -341,7 +341,7 @@ if needed) before starting them again.
 
 [src/update-cfg.sh]: src/update-cfg.sh
 
-### Network Usage
+## Network Usage
 
 If your GSM network has been set up to require authentication, connecting to
 the network is straightforward, assuming your SIM card has been programmed
@@ -362,7 +362,7 @@ your device should connect to your network.
 
 ![](img/android_choose_network.gif?raw=true "Choose network")
 
-#### Managing subscribers
+### Managing subscribers
 
 You can manage subscribers via the OsmoHLR's VTY interface. By default, OsmoHLR
 binds its VTY to TCP port `4258`. To connect, you may use `telnet`, as follows.
@@ -430,7 +430,7 @@ OsmoHLR# subscriber imsi 724640000000000 show
              KI=00000000000000000000000000000000
 ```
 
-#### Calls and SMS
+### Calls and SMS
 
 Once a device is connected to the GSM network, calls and SMS should *just*
 *work*. To figure out the phone numbers to call and/or send messages to, look
@@ -438,7 +438,7 @@ up each subscriber's MSISDN. You can either do this directly from the host
 system (e.g. by querying the OsmoHLR VTY) or by using the USSD service on a
 mobile phone to find out its assigned number (dial `*#100#`).
 
-#### Internet access
+### Internet access
 
 Unlike with calls and SMS, internet access through your GSM network might
 require some additional configuration on the mobile device itself.
@@ -477,7 +477,7 @@ configurations may be missing.
 [enable data roaming]: https://www.youtube.com/watch?v=bhRNJJK0-aA
 [OTA updates]: https://stackoverflow.com/a/63635659
 
-#### Emergency alerts
+## Emergency alerts
 
 You can broadcast emergency alerts on the GSM network using the REST API
 provided by OsmoCBC. The `osmo-cbc-utils` package provides a command line tool
@@ -519,7 +519,7 @@ Some issues you might run into:
 
 [CB]: https://osmocom.org/projects/cellular-infrastructure/wiki/Cell_Broadcast
 
-### Further Reading
+## Further Reading
 
 Cellular technology and its related components, including the Osmocom project,
 are fascinatingly intricate and complex. Although this guide gives you a
@@ -540,7 +540,7 @@ and VTY reference, all accessible on the project's website.
 [Osmocom Network In The Box]: https://osmocom.org/projects/cellular-infrastructure/wiki/Osmocom_Network_In_The_Box
 [Osmocom Docs]: https://downloads.osmocom.org/docs/
 
-### Acknowledgements
+## Acknowledgements
 
 This guide builds upon the work of [Lucas Teske], who first delved into this
 topic back in 2019, and later shared his insights at the [RF Village] at the
