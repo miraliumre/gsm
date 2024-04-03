@@ -496,6 +496,8 @@ configurations may be missing.
 
 ## Emergency alerts
 
+![](img/android_extreme_alert.png "Extreme alert")  
+
 You can broadcast emergency alerts on the GSM network using the REST API
 provided by OsmoCBC. The `osmo-cbc-utils` package provides a command line tool
 named `cbc-apitool.py` to interact with said API.
