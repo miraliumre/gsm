@@ -346,7 +346,7 @@ you'll be required to:
 
 4. configure iptables as appropriate. At the very least, you will be required
    to set up NAT for both `apn0` and the network interface that is connected to
-   the internet (in this example, `eth0`), and to allow packet forwarding
+   the internet (in this example, `ens33`), and to allow packet forwarding
    between those interfaces.
 
    ```bash
