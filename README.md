@@ -356,7 +356,7 @@ you'll be required to:
    iptables -A FORWARD -i ens33 -o apn0 -j ACCEPT
    ```
 
-Note that *none of these settings is persistent by default.* If you want for
+Note that _none of these settings is persistent by default._ If you want for
 them to persist across reboots, you'll have to device on which strategies to
 use (e.g. editing `/etc/sysctl.conf`, using startup scripts, installing
 [iptables-persistent], among other possible options).
@@ -485,7 +485,7 @@ signal strength bars, this indicates that the phone is currently in roaming
 mode.
 
 ![](img/android_roaming_icon.png "Android roaming icon")  
-_"Roaming symbol shown on an Android smartphone" by The RedBurn, Mark Groves on
+_Roaming symbol shown on an Android smartphone by The RedBurn, Mark Groves on
 [Wikimedia Commons]_
 
 Next up, your device will require APN (Access Point Name) settings to
@@ -500,6 +500,13 @@ new APN and select it to get connected.
 I have seen older, non-Android phones with different setup requirements. In
 those cases, you might need to browse through the menus and figure out which
 configurations may be missing.
+
+> **ℹ️ Heads up:** in my experience, I have found it extremely difficult to
+> have modern Android smartphones successfully use the GSM network for internet
+> access at all. I suspect the system and its apps might be sending too much
+> data at once, possibly overloading the network, and often assuming that
+> connection isn't available when it actually is, just extremely slow. For that
+> purpose, using the older “dumb phones” appears to work best.
 
 [roaming]: https://en.wikipedia.org/wiki/Roaming
 [Wikimedia Commons]:
