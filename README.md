@@ -564,9 +564,9 @@ free to open an issue or submit a pull request.
 
 ## Acknowledgements
 
-This guide builds upon the work of [Lucas Teske], who first delved into this
-topic back in 2019, and later shared his insights at the [RF Village] at the
-[H2HC] in 2022.
+This guide builds upon the work of [Lucas Teske], who first wrote about this
+topic back in 2019, and later talked about it at the [RF Village] at the [H2HC]
+in 2022.
 
 A huge shoutout is also due to the entire open source community that has
 created and supports projects such as the LimeSDR and Osmocom. It is because of
