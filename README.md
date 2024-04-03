@@ -358,14 +358,14 @@ package.
 
 ### Start the Osmocom services
 
-Use the [src/update-cfg.sh] convenience script to start all the required
-Osmocom services (i.e. by running `src/update-cfg.sh start`). It is likely that
+Use the [src/osmo-all.sh] convenience script to start all the required
+Osmocom services (i.e. by running `src/osmo-all.sh start`). It is likely that
 the services had already been started automatically when you installed them, so
-it is recommended to completely stop them by running `src/update-cfg.sh stop`
-(and, possibly, `src/update-cfg.sh kill`, if needed) before starting them
+it is recommended to completely stop them by running `src/osmo-all.sh stop`
+(and, possibly, `src/osmo-all.sh kill`, if needed) before starting them
 again.
 
-[src/update-cfg.sh]: src/update-cfg.sh
+[src/osmo-all.sh]: src/osmo-all.sh
 
 ## Network Usage
 
