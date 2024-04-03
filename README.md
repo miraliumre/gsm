@@ -356,8 +356,8 @@ you'll be required to:
    iptables -A FORWARD -i ens33 -o apn0 -j ACCEPT
    ```
 
-Note that _none of these settings is persistent by default._ If you want for
-them to persist across reboots, you'll have to device on which strategies to
+Note that **none of these settings is persistent by default.** If you want for
+them to persist across reboots, you'll have to decide on which strategies to
 use (e.g. editing `/etc/sysctl.conf`, using startup scripts, installing
 [iptables-persistent], among other possible options).
 
