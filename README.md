@@ -260,7 +260,7 @@ networks where authentication is set to `optional`.
 network country code 724
 mobile network code 64
 short name Miralium
-long name MiraliumResearch
+long name Miralium Research
 authentication optional
 encryption a5 0
 ```
@@ -309,46 +309,57 @@ convenience.
 [osmo-sgsn.cfg]: etc/osmocom/osmo-sgsn.cfg
 [src/update-cfg.sh]: src/update-cfg.sh
 
+### Start the Osmocom services
+
+Use the [src/osmo-all.sh] convenience script to start all the required Osmocom
+services (i.e. by running `src/osmo-all.sh start`). It is likely that the
+services had already been started automatically when you installed them, so it
+is recommended to completely stop them by running `src/osmo-all.sh stop` (and,
+possibly, `src/osmo-all.sh kill`, if needed) before starting them again.
+
+[src/osmo-all.sh]: src/osmo-all.sh
+
 ### Set up routing
 
-As per our configuration, OsmoGGSN will use a TUN interface named `apn0` from
+Once OsmoGGSN has started, it will create a TUN interface named `apn0` from
 which the GSM network subscribers will reach the internet. For it to work,
 you'll be required to:
 
-1. create the TUN interface;
-
-   ```bash
-   ip tuntap add dev apn0 mode tun user root group root
-   ```
-
-2. add an IP address to the newly created interface (in accordance with the
+1. add an IP address to the newly created interface (in accordance with the
    settings in `osmo-ggsn.cfg`);
 
    ```bash
    ip addr add 172.16.32.1/24 dev apn0
    ```
 
-3. bring the interface up;
+2. bring the interface up;
 
    ```bash
    ip link set apn0 up
    ```
 
-4. enable [IP forwarding] (e.g. by editing `/etc/sysctl.conf` to add the
-   `net.ipv4.ip_forward = 1` line and loading the changes with `sysctl -p`);
+3. enable [IP forwarding];
 
-5. configure iptables for NAT on the relevant network interfaces.
    ```bash
-   iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-   iptables -t nat -A POSTROUTING -o apn0 -j MASQUERADE
+   sysctl -w net.ipv4.ip_forward=1
    ```
 
-On this last step, you'll be required to replace `eth0` with the name of the
-network interface on your computer that is connected to the internet.
+4. configure iptables as appropriate. At the very least, you will be required
+   to set up NAT for both `apn0` and the network interface that is connected to
+   the internet (in this example, `eth0`), and to allow packet forwarding
+   between those interfaces.
 
-Remember that additional setup might be required to make these changes to
-iptables persist across reboots. You may want to use the [iptables-persistent]
-package.
+   ```bash
+   iptables -t nat -A POSTROUTING -o ens33 -j MASQUERADE
+   iptables -t nat -A POSTROUTING -o apn0 -j MASQUERADE
+   iptables -A FORWARD -i apn0 -o ens33 -j ACCEPT
+   iptables -A FORWARD -i ens33 -o apn0 -j ACCEPT
+   ```
+
+Note that *none of these settings is persistent by default.* If you want for
+them to persist across reboots, you'll have to device on which strategies to
+use (e.g. editing `/etc/sysctl.conf`, using startup scripts, installing
+[iptables-persistent], among other possible options).
 
 > **ℹ️ Heads up:** manually setting iptables rules while [UFW] is installed and
 > enable can cause conflicts. For this setup, it is recommended that you
@@ -358,17 +369,6 @@ package.
   https://openvpn.net/faq/what-is-and-how-do-i-enable-ip-forwarding-on-linux/
 [iptables-persistent]: https://packages.debian.org/bookworm/iptables-persistent
 [UFW]: https://help.ubuntu.com/community/UFW
-
-### Start the Osmocom services
-
-Use the [src/osmo-all.sh] convenience script to start all the required
-Osmocom services (i.e. by running `src/osmo-all.sh start`). It is likely that
-the services had already been started automatically when you installed them, so
-it is recommended to completely stop them by running `src/osmo-all.sh stop`
-(and, possibly, `src/osmo-all.sh kill`, if needed) before starting them
-again.
-
-[src/osmo-all.sh]: src/osmo-all.sh
 
 ## Network Usage
 
