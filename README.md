@@ -141,7 +141,7 @@ doesn't need to be disabled), although they are not required.
 
 ![](img/sysmo_sim.png "Programmable SIM card from sysmocom")
 
-For hobbyist applications, [sysmocom] is a renowned and reliable provider.
+For programmable SIM cards, [sysmocom] is a renowned and reliable provider.
 Alternatively, marketplaces like Banggood and AliExpress offer inexpensive
 writeable SIM cards, though quality and features can vary.
 
